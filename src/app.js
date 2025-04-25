@@ -13,7 +13,7 @@ if (!sourcePath || !destinationPath) {
     console.error('Source and destination paths must be different.');
   }
 
-  fs.cp(sourcePath, destinationPath, (error) => {
+  fs.cp(sourcePath, destinationPath, { recursive: false }, (error) => {
     if (error) {
       console.error('Failed to copy file:', error.message);
     } else {
