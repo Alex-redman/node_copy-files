@@ -1,28 +1,29 @@
 /* eslint-disable no-console */
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
+const { cp } = require('fs/promises');
 
-const [, , sourcePath, destinationPath] = process.argv;
+async function copy() {
+  const [, , sourcePath, destinationPath] = process.argv;
 
-if (!sourcePath || !destinationPath) {
-  console.error('You must provide both source and destination paths.');
-} else {
-  if (path.resolve(sourcePath) === path.resolve(destinationPath)) {
+  if (!sourcePath || !destinationPath) {
+    console.error('You must provide both source and destination paths.');
+
+    return;
+  }
+
+  if (sourcePath === destinationPath) {
     console.error('Source and destination paths must be different.');
-  } else if (!fs.existsSync(sourcePath)) {
-    console.error('Source does not exist.');
-  } else {
-    const sourceStat = fs.statSync(sourcePath);
-    const recursive = sourceStat.isDirectory();
 
-    fs.cp(sourcePath, destinationPath, { recursive }, (error) => {
-      if (error) {
-        console.error('Failed to copy:', error.message);
-      } else {
-        console.log('Copied successfully.');
-      }
-    });
+    return;
+  }
+
+  try {
+    await cp(sourcePath, destinationPath);
+    console.log('File copied successfully.');
+  } catch (error) {
+    console.error('Failed to copy file:', error.message);
   }
 }
+
+copy();
