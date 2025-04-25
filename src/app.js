@@ -11,13 +11,18 @@ if (!sourcePath || !destinationPath) {
 } else {
   if (path.resolve(sourcePath) === path.resolve(destinationPath)) {
     console.error('Source and destination paths must be different.');
-  }
+  } else if (!fs.existsSync(sourcePath)) {
+    console.error('Source does not exist.');
+  } else {
+    const sourceStat = fs.statSync(sourcePath);
+    const recursive = sourceStat.isDirectory();
 
-  fs.cp(sourcePath, destinationPath, { recursive: false }, (error) => {
-    if (error) {
-      console.error('Failed to copy file:', error.message);
-    } else {
-      console.log('File copied successfully.');
-    }
-  });
+    fs.cp(sourcePath, destinationPath, { recursive }, (error) => {
+      if (error) {
+        console.error('Failed to copy:', error.message);
+      } else {
+        console.log('Copied successfully.');
+      }
+    });
+  }
 }
